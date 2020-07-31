@@ -1,25 +1,48 @@
-async function showFavorite() {
-  let favorite = "";
+import { findAllFavClub, deleteFavClubByID } from "../utils/database"
+import mouting from "../utils/render"
 
-  const favoriteData = await idxDB.checkFavClub();
+async function favorite() {
+  const elementByID = "favorite-club"
 
-  if (!favoriteData[0]) {
-    favorite += `
-      <h6 class="center">
-      You dont have Favorite Team
-      </h6>
-    `;
+  const favorites = await findAllFavClub()
 
-    document.getElementById("favorite-club").innerHTML = favorite;
+  if (!favorites[0]) {
+    const emptyClubHTML = emptyClub()
+    return mouting(elementByID).render(emptyClubHTML)
   }
 
-  favoriteData.forEach((club) => {
+  const favClubHTML = showFavorite(favorites)
+  mouting(elementByID).render(favClubHTML)
+
+  const favButton = document.querySelectorAll("#fav-button")
+
+  favButton.forEach((elm) => {
+    elm.onclick = (e) => {
+      const id = e.currentTarget.value
+      deleteFavClubByID(parseInt(id))
+      document.getElementById(id).outerHTML = null
+    }
+  })
+}
+
+function emptyClub() {
+  return `
+  <h6 class="center">
+  You dont have Favorite Team
+  </h6>
+`
+}
+
+function showFavorite(data) {
+  let favorite = ""
+
+  data.forEach((club) => {
     favorite += `
-      <div class="card club-card row center-align z-depth-0">
+      <div id=${club.id} class="card club-card row center-align z-depth-0">
       <div class="col s12">
       <img class="fav-img" src="${club.crestUrl.replace(
         /^http:\/\//i,
-        "https://"
+        "https://",
       )}">
       </div>
 
@@ -33,12 +56,14 @@ async function showFavorite() {
         <p><b>${club.venue}</b></p>
       </div>
   
-      <button onClick="idxDB.deleteFavClub(${
+      <button value="${
         club.id
-      })" class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></button>
+      }" id="fav-button" class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></button>
    </div>
-      `;
-  });
+      `
+  })
 
-  document.getElementById("favorite-club").innerHTML = favorite;
+  return favorite
 }
+
+export default favorite

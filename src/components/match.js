@@ -1,45 +1,32 @@
-import Mounting from "../utils/render";
-import fetchAPI from "../utils/fetchApi";
+import mouting from "../utils/render"
+import fetchAPI from "../utils/fetchApi"
+import moment from "moment"
 
-function getMatch() {
-  const elementID = "match";
-  const BASE_URL = "https://api.football-data.org/v2/";
-  const EPL = 2021;
+function mathces() {
+  const elementID = "match"
+  const BASE_URL = "https://api.football-data.org/v2/"
+  const EPL = 2021
 
-  const API_KEY_FOOTBALL = "57f4d7173b344e88a523307718277655";
+  const API_KEY_FOOTBALL = "57f4d7173b344e88a523307718277655"
 
-  const addZero = (n) => {
-    return n < 10 ? "0" + n : n;
-  };
+  const dateToday = moment().format().slice(0, 10)
+  const dateNextWeek = moment().add(1, "week").format().slice(0, 10)
 
-  let today = new Date();
-  let day = today.getDate();
-  let month = today.getMonth() + 1;
-  let year = today.getFullYear();
-  let dateNow = year + "-" + addZero(month) + "-" + addZero(day);
-
-  let nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  let nDay = nextWeek.getDate();
-  let nMonth = nextWeek.getMonth() + 1;
-  let nYear = nextWeek.getFullYear();
-  let dateTo = nYear + "-" + addZero(nMonth) + "-" + addZero(nDay);
-
-  const ENDPOINT_MATCHES = `${BASE_URL}competitions/${EPL}/matches?dateFrom=${dateNow}&dateTo=${dateTo}&status=SCHEDULED`;
+  const ENDPOINT_MATCHES = `${BASE_URL}competitions/${EPL}/matches?dateFrom=${dateToday}&dateTo=${dateNextWeek}&status=SCHEDULED`
 
   fetchAPI(ENDPOINT_MATCHES, {
     headers: { "X-Auth-Token": API_KEY_FOOTBALL },
   })
     .then((data) => {
-      const match = showMatch(data);
-      Mounting(elementID).render(match);
+      const match = showMatch(data)
+      mouting(elementID).render(match)
     })
-    .catch(() => Mounting(elementID).error());
+    .catch(() => mouting(elementID).error())
 }
 
 function showMatch(data) {
-  let matches = "";
-  let count = 1;
+  let matches = ""
+  let count = 1
 
   data.matches.forEach((match) => {
     matches += `
@@ -63,10 +50,10 @@ function showMatch(data) {
     </div>
 
      </div>
-    `;
-  });
+    `
+  })
 
-  return matches;
+  return matches
 }
 
-export default getMatch;
+export default mathces

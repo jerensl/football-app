@@ -1,24 +1,24 @@
-import Mounting from "../utils/render";
-import fetchAPI from "../utils/fetchApi";
+import mouting from "../utils/render"
+import fetchAPI from "../utils/fetchApi"
 
 async function getStandings() {
-  const elementID = "klasemen";
-  const elementTS = "league-title";
-  const BASE_URL = "https://api.football-data.org/v2/";
-  const API_KEY_FOOTBALL = "57f4d7173b344e88a523307718277655";
-  const EPL = 2021;
-  const ENDPOINT_COMPETITION = `${BASE_URL}competitions/${EPL}/standings`;
+  const elementID = "klasemen"
+  const elementTS = "league-title"
+  const BASE_URL = "https://api.football-data.org/v2/"
+  const API_KEY_FOOTBALL = "57f4d7173b344e88a523307718277655"
+  const EPL = 2021
+  const ENDPOINT_COMPETITION = `${BASE_URL}competitions/${EPL}/standings`
 
   fetchAPI(ENDPOINT_COMPETITION, {
     headers: { "X-Auth-Token": API_KEY_FOOTBALL },
   })
     .then((data) => {
-      const standings = showStandings(data);
-      const titleLeague = showTitleLeague(data);
-      Mounting(elementTS).render(titleLeague);
-      Mounting(elementID).render(standings);
+      const standings = showStandings(data)
+      const titleLeague = showTitleLeague(data)
+      mouting(elementTS).render(titleLeague)
+      mouting(elementID).render(standings)
     })
-    .catch(() => Mounting(elementID).error());
+    .catch(() => mouting(elementID).error())
 }
 
 function showTitleLeague(data) {
@@ -26,12 +26,12 @@ function showTitleLeague(data) {
   <h5>
   <b>${data.competition.name}</b>
   </h5>
-  `;
-  return title;
+  `
+  return title
 }
 
 function showStandings(data) {
-  let standings = "";
+  let standings = ""
 
   data.standings[0].table.forEach((standing) => {
     standings += `
@@ -40,12 +40,10 @@ function showStandings(data) {
               }'">
                   <td class="center">${standing.position}</td>
                   <td>
-                  <img crossorigin="anonymous" class="emblem" alt="${
-                    standing.team.name
-                  }" 
+                  <img class="emblem" alt="${standing.team.name}" 
                     src="${standing.team.crestUrl.replace(
                       /^http:\/\//i,
-                      "https://"
+                      "https://",
                     )}" alt="badge"/>
                     <span>${standing.team.name}</span>
                   </td>
@@ -55,10 +53,10 @@ function showStandings(data) {
                   <td>${standing.lost}</td>
                   <td class="center">${standing.points}</td>
               </tr>
-      `;
-  });
+      `
+  })
 
-  const html = `<table class="striped">
+  const htmlElement = `<table class="striped">
   <thead>
     <tr>
       <th class="center">Pos</th>
@@ -71,9 +69,9 @@ function showStandings(data) {
     </tr>
   </thead>
   <tbody id="standings">${standings}</tbody>
-</table>`;
+</table>`
 
-  return html;
+  return htmlElement
 }
 
-export default getStandings;
+export default getStandings

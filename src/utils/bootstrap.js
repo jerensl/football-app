@@ -2,6 +2,7 @@ import renderNews from "../components/news"
 import renderStandings from "../components/standings"
 import renderTopScore from "../components/topScore"
 import renderMatch from "../components/match"
+import showFavorite from "../components/favorite"
 
 document.addEventListener("DOMContentLoaded", () => {
   // Activate sidebar nav
@@ -60,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderMatch()
             break
           case "favorite":
-            render().showFavorite()
+            showFavorite()
             break
         }
 

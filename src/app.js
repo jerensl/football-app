@@ -2,9 +2,13 @@ import styles from "./css/materialize.min.css"
 import "./css/styles.css"
 import app from "./utils/materialize.min.js"
 import bootstrap from "./utils/bootstrap"
+import { initDB } from "./utils/database"
+import urlBase64ToUint8Array from "./utils/urlBase64ToUint8Array"
+
+initDB()
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
+  self.addEventListener("load", () => {
     registerServiceWorker()
     requestPermission()
   })
@@ -34,6 +38,42 @@ function requestPermission() {
         console.error("Pengguna menutup kotak dialog permintaan ijin.")
         return
       }
+
+      navigator.serviceWorker.ready.then(() => {
+        if ("PushManager" in window) {
+          navigator.serviceWorker
+            .getRegistration()
+            .then(function (registration) {
+              registration.pushManager
+                .subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: urlBase64ToUint8Array(
+                    "BCWY0GrN8YqGSr6QXAnP_Z7Zt-TlSAKnH4o0nYfLHGlNPTl85lb8qrmHDAFvNUFFxBYgTGNA4lYiw7vUGIu7ImI",
+                  ),
+                })
+                .then((subscribe) => {
+                  console.table({
+                    endpoit: subscribe.endpoint,
+                    pd256key: btoa(
+                      String.fromCharCode.apply(
+                        null,
+                        new Uint8Array(subscribe.getKey("p256dh")),
+                      ),
+                    ),
+                    authKey: btoa(
+                      String.fromCharCode.apply(
+                        null,
+                        new Uint8Array(subscribe.getKey("auth")),
+                      ),
+                    ),
+                  })
+                })
+                .catch(function (e) {
+                  console.error("Tidak dapat melakukan subscribe ", e.message)
+                })
+            })
+        }
+      })
     })
   }
 }

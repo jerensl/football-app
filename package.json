@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "idb": "^5.0.4",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "web-push": "^3.4.4"
   },
   "devDependencies": {
